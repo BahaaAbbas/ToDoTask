@@ -1,5 +1,6 @@
 const API_URL = "https://dummyjson.com/todos";
 let mainTodos = [];
+let selectedRowToDelete = null;
 
 const tbody = document.querySelector(".todo-table tbody");
 const formTodo = document.getElementById("todo-form");
@@ -31,7 +32,9 @@ async function fetchTodos() {
     mainTodos = data.todos;
     localStorage.setItem("todos", JSON.stringify(mainTodos));
     UpToDateTasks(mainTodos);
-  } catch (error) {}
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 // Up to date Tasks
@@ -97,7 +100,7 @@ searchField.addEventListener("input", () => {
   UpToDateTasks(searchedTasks);
 });
 
-// fourm adding tasks
+// form adding tasks
 formTodo.addEventListener("submit", async (event) => {
   event.preventDefault();
 
@@ -121,6 +124,7 @@ formTodo.addEventListener("submit", async (event) => {
       title: "Duplicate Task",
       text: "Task Already Exist Lil Bro..",
     });
+    todoText.value = "";
 
     return;
   }
@@ -148,6 +152,152 @@ formTodo.addEventListener("submit", async (event) => {
     todoText.value = "";
     searchField.value = "";
   } catch (error) {
-    console.error(err);
+    console.error(error);
+  }
+});
+
+tbody.addEventListener("click", (event) => {
+  const row = event.target.closest("tr");
+  if (!row) return;
+
+  const taskId = parseInt(row.dataset.id);
+  const task = mainTodos.find((task) => task.id === taskId);
+  const statusText = row.querySelector(".status");
+  const taskContent = row.querySelector(".task-content");
+  const checkIcon = row.querySelector(".fa-check");
+
+  if (event.target.classList.contains("fa-check")) {
+    if (!task.completed) {
+      task.completed = true;
+      checkIcon.classList.add("disabled");
+      taskContent.classList.add("completed-task");
+      statusText.textContent = "completed";
+    }
+  }
+
+  if (event.target.classList.contains("fa-xmark")) {
+    selectedRowToDelete = row;
+    popup.style.display = "block";
+  }
+
+  updateStatusClass(statusText);
+  updateStats(mainTodos);
+  localStorage.setItem("todos", JSON.stringify(mainTodos));
+});
+
+tbody.addEventListener("dblclick", (event) => {
+  const taskContent = event.target.closest(".task-content");
+
+  if (!taskContent) return;
+
+  const row = event.target.closest("tr");
+  const taskId = parseInt(row.dataset.id);
+  const task = mainTodos.find((task) => {
+    return task.id === taskId;
+  });
+  const statusText = row.querySelector(".status");
+  const checkIcon = row.querySelector(".fa-check");
+
+  if (task.completed) {
+    task.completed = false;
+    checkIcon.classList.remove("disabled");
+    taskContent.classList.remove("completed-task");
+    statusText.textContent = "pending";
+    updateStatusClass(statusText);
+    updateStats(mainTodos);
+    localStorage.setItem("todos", JSON.stringify(mainTodos));
+
+    taskContent.contentEditable = "true";
+    taskContent.focus();
+
+    fetch(`https://dummyjson.com/todos/${taskId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ completed: false }),
+    }).catch((error) => console.error("Failed to update task status:", error));
+  } else {
+    taskContent.contentEditable = "true";
+    taskContent.focus();
+  }
+
+  const saveEdit = async () => {
+    const newText = taskContent.textContent.trim();
+    if (newText && newText !== task.todo) {
+      task.todo = newText;
+
+      try {
+        await fetch(`https://dummyjson.com/todos/${taskId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ todo: newText }),
+        });
+      } catch (error) {
+        console.error("Error updating task:", error);
+      }
+
+      localStorage.setItem("todos", JSON.stringify(mainTodos));
+    }
+
+    taskContent.contentEditable = "false";
+  };
+
+  const handleKey = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      taskContent.blur();
+    }
+  };
+
+  taskContent.addEventListener("blur", saveEdit, { once: true });
+  taskContent.addEventListener("keydown", handleKey);
+});
+
+function updateStatusClass(statusEl) {
+  const isCompleted = statusEl.textContent.trim().toLowerCase() === "completed";
+  statusEl.classList.toggle("complete", isCompleted);
+  statusEl.classList.toggle("pending", !isCompleted);
+}
+
+// Popup delete handlers
+cancelBtn.addEventListener("click", () => {
+  popup.style.display = "none";
+  selectedRowToDelete = null;
+});
+
+deleteBtn.addEventListener("click", async () => {
+  if (!selectedRowToDelete) return;
+
+  const taskId = parseInt(selectedRowToDelete.dataset.id);
+
+  try {
+    const response = await fetch(`${API_URL}/${taskId}`, {
+      method: "DELETE",
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to delete the task");
+    }
+
+    mainTodos = mainTodos.filter((task) => {
+      return task.id !== taskId;
+    });
+
+    mainTodos = mainTodos.map((task, index) => {
+      return { ...task, id: index + 1 };
+    });
+
+    localStorage.setItem("todos", JSON.stringify(mainTodos));
+    UpToDateTasks(mainTodos);
+  } catch (error) {
+    console.error("Error deleting task:", error);
+
+    Swal.fire({
+      icon: "warning",
+      title: "Oops...",
+      text: "Failed to delete task.",
+    });
+  } finally {
+    popup.style.display = "none";
+    selectedRowToDelete = null;
   }
 });

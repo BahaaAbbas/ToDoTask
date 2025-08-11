@@ -296,6 +296,60 @@ h6 {
   text-transform: capitalize;
 }
 
+.todo-table tbody tr td.complete:nth-of-type(1) {
+  color: var(--completed-color);
+}
+
+.todo-table tbody tr td.pending:nth-of-type(1) {
+  color: var(--pending-color);
+}
+
+.todo-table .task-content {
+  display: block;
+  max-width: 100%;
+  padding: 8px 0;
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.todo-table tbody .task:hover {
+  color: #281970;
+  cursor: pointer;
+}
+
+.todo-table tbody .task .task-content.completed-task {
+  text-decoration: line-through;
+  color: #6b7a8f;
+}
+
+.todo-table tbody .task .task-content.completed-task:hover {
+  color: #281970;
+}
+
+.todo-table tbody tr td:last-of-type i.disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+  pointer-events: none;
+  opacity: 0.6;
+  border-radius: 5px;
+  padding: 5px;
+}
+
+.fa-check {
+  padding: 5px;
+  background-color: var(--completed-color);
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.fa-xmark {
+  padding: 5px;
+  background-color: #ef5556;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
 /* Delete PopUp  */
 .popup-overlay {
   position: fixed;
