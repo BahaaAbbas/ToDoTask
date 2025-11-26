@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="author" content="Bahaa Abbas" />
+    <title>BahaaToDo</title>
+    <link rel="icon" href="assets/todo.png" type="image/png" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="header">
+      <div class="header-container">
+        <div class="logo">
+          <i class="fa-solid fa-square-check"></i>
+        </div>
+        <div class="header-title">
+          <h1 class="main-title">BahaaTodo App</h1>
+          <p class="secondary-title">
+            <i class="fa-regular fa-star"></i>
+            Organize your tasks beautifully
+          </p>
+        </div>
+      </div>
+    </header>
+
+    <main class="main">
+      <div class="container">
+        <!-- form -->
+        <form action="" class="form" id="todo-form">
+          <input
+            type="text"
+            name="text"
+            id="todo-text"
+            placeholder="Add a new todo..."
+          />
+          <button type="submit" id="submitBtn">
+            <i class="fa-solid fa-plus"></i>
+            Add Todo
+          </button>
+        </form>
+        <!-- Search -->
+        <div class="search">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input
+            type="text"
+            name="search"
+            id="search"
+            placeholder="Search todos..."
+          />
+        </div>
+
+        <!-- Stats -->
+        <div class="stats">
+          <div class="box">
+            <i class="fa-solid fa-list-check"></i>
+            <div class="box-info">
+              <p class="box-title">Total</p>
+              <p class="box-value">30</p>
+            </div>
+          </div>
+
+          <div class="box">
+            <i class="fa-solid fa-circle-check"></i>
+            <div class="box-info">
+              <p class="box-title">Completed</p>
+              <p class="box-value">15</p>
+            </div>
+          </div>
+
+          <div class="box">
+            <i class="fa-regular fa-circle"></i>
+            <div class="box-info">
+              <p class="box-title">Pending</p>
+              <p class="box-value">15</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ToDo -->
+        <div class="todo-table">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 3rem">Status</th>
+                <th style="width: 3rem">ID</th>
+                <th style="width: 3rem">UserID</th>
+                <th>Task</th>
+                <th style="width: 5rem">Actions</th>
+              </tr>
+            </thead>
+
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+
+    <!-- Delete PopUp -->
+    <div class="popup-overlay">
+      <div class="popup">
+        <h3>Delete Todo</h3>
+        <p>
+          Are you sure you want to delete this todo? This action cannot be
+          undone.
+        </p>
+        <div class="popup-btn">
+          <button class="cancel">Cancel</button>
+          <button class="delete">Delete</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-summary">
+            <p class="summary-text">
+              <span>30</span>
+              total todos
+            </p>
+
+            <p class="summary-text">
+              <span>15</span>
+              Completed
+            </p>
+
+            <p class="summary-text">
+              <span>15</span>
+              Pending
+            </p>
+          </div>
+          <div class="footer-text">
+            <p>&copy; 2025 Bahaa Abbas. All rights Reserved.</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script src="tasks.js"></script>
+  </body>
+</html>
